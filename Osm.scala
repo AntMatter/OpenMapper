@@ -1,6 +1,7 @@
 import org.apache.spark.sql.SparkSession
 import java.io._
 import org.apache.spark.graphx._
+import org.apache.spark.rdd.RDD
 
 object Osm {
 
@@ -33,14 +34,15 @@ object Osm {
     var vertecies = vertex_list_lines_list_lines.map(s=>(s.split(" ")(0)))
 
     //Make Nodes of graph
-    val graph_nodes: RDD[(VertexId, (String, String))] = node_list_lines.map(s=>(s.split(" ")(0), (s.split(" ")(1), s.split(" "))(2))
+    val graph_nodes: RDD[(VertexId, (String, String))] = node_list_lines.map(s=>(s.split(" ")(0), (s.split(" ")(1), s.split(" "))(2)))
 
-    val graph_vertex: RDD[Edge[Double]] = vertex_list_lines.map(s=> Edge(s.split(" ")(0), s.split(" ")(1), s.split(" ")(2)))
+    val graph_vertex: RDD[Edge[String]] = vertex_list_lines.map(s=> Edge(s.split(" ")(0), s.split(" ")(1), s.split(" ")(2)))
 
-    val defaultPlace = ""
+    val defaultPlace = ("0000", "0", "0")
 
-    var sortedagain = result.reduceByKey((a,b) => a+b).sortBy(_._2, false)
+    val graph = Graph(graph_nodes, graph_vertex, defaultPlace)
+
     //Output!
-    sortedagain.saveAsTextFile(args(2))
+    //graph.saveAsTextFile(args(2))
   }
 }
