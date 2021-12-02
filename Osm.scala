@@ -15,7 +15,7 @@ def dijkstra[VD](g:Graph[VD,Double], origin:VertexId) = {
     (vid,vd) => (false, if (vid == origin) 0 else Double.MaxValue,
                  List[VertexId]()))
 
-  for (i <- 1L to 100L) {
+  for (i <- 1L to g.vertices.count-1) {
     val currentVertexId =
       g2.vertices.filter(!_._2._1)
         .fold((0L,(false,Double.MaxValue,List[VertexId]())))((a,b) =>
@@ -70,13 +70,13 @@ def dijkstra[VD](g:Graph[VD,Double], origin:VertexId) = {
     var edge_list_lines = sc.textFile(args(1))
     var edges = edge_list_lines.map(s=>(s.split(" ")(0), (s.split(" ")(1), s.split(" ")(2))))
 
-    val nodesRdd : RDD[(VertexId, Any)] = node_list_lines.map(s =>(s.split(" ")(0).toLong, (s.split(" ")(1) + " " + s.split(" ")(2))))
+    val nodesRdd : RDD[(VertexId, Any)] = node_list_lines.map(s =>(s.split(" ")(0).toLong, (s.split(" ")(0) + ": " + s.split(" ")(1) + " " + s.split(" ")(2))))
 
     val edgesRDD = edge_list_lines.map(s =>(Edge(s.split(" ")(0).toLong, s.split(" ")(1).toLong, s.split(" ")(2).toDouble)))
 
     val myGraph = Graph(nodesRdd, edgesRDD)
 
-    val path = dijkstra(myGraph, 51221900L).vertices.map(_._2).collect
+    val path = dijkstra(myGraph, 330098703L).vertices.map(_._2).collect
 
     val pathConvert = path.asInstanceOf[Array[(String, List[(Double, List[VertexId])])]]
 
