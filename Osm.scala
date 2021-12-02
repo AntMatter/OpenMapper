@@ -73,17 +73,34 @@ def dijkstra[VD](g:Graph[VD,Double], origin:VertexId) = {
     val nodesRdd : RDD[(VertexId, Any)] = node_list_lines.map(s =>(s.split(" ")(0).toLong, (s.split(" ")(0) + ": " + s.split(" ")(1) + " " + s.split(" ")(2))))
 
     val edgesRDD = edge_list_lines.map(s =>(Edge(s.split(" ")(0).toLong, s.split(" ")(1).toLong, s.split(" ")(2).toDouble)))
+    val reversedEdgeRdd = edge_list_lines.map(s =>(Edge(s.split(" ")(1).toLong, s.split(" ")(0).toLong, s.split(" ")(2).toDouble)))
 
-    val myGraph = Graph(nodesRdd, edgesRDD)
+    val combinedEdges = edgesRDD.union(reversedEdgeRdd)
 
-    val path = dijkstra(myGraph, 330098703L).vertices.map(_._2).collect
+    val myGraph = Graph(nodesRdd, combinedEdges)
 
-    val pathConvert = path.asInstanceOf[Array[(String, List[(Double, List[VertexId])])]]
+    val nodeiD = nodesRdd.map(_._1)
 
-    val out = sc.parallelize(pathConvert)
+    nodeiD.collect().foreach(s=> {
+      //nodeiD.foreach(s=> {
+      val path = dijkstra(myGraph, s).vertices.map(_._2).collect
+      val pathConvert = path.asInstanceOf[Array[(String, List[(Double, List[VertexId])])]]
+
+      //This line might probably break everything...
+      val formatted = pathConvert.map(s => s._1 + " " + s._2.toString.replaceAll("""[List()\[\]]""", "").replaceAll(",", ""))
+      val out = sc.parallelize(formatted)
+      
+      val realout = out.coalesce(1).saveAsTextFile(args(2) + "/" + s.toString)
+    })
+
+    // val path = dijkstra(myGraph, 330098703L).vertices.map(_._2).collect
+
+    // val pathConvert = path.asInstanceOf[Array[(String, List[(Double, List[VertexId])])]]
+
+    // val out = sc.parallelize(pathConvert)
 
     
-    val realout = out.coalesce(1).saveAsTextFile(args(2))
+    // val realout = out.coalesce(1).saveAsTextFile(args(2))
 
     //val rddNode = spark.createDataFrame(nodes).toDF("id", "lat")
 
