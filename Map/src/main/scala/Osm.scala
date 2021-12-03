@@ -33,7 +33,7 @@ object Osm {
         },
 
         //Combine Messages (Merge)
-        //Return the message with the shorter edge
+        //Return the message with the total
         (a, b) => if (a._1 < b._1) a else b)
 
     sssp.vertices.collect.mkString("\n")
