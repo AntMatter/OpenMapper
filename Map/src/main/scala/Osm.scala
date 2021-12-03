@@ -16,9 +16,14 @@ object Osm {
       graph.mapVertices((id, _) => 
       if (id == sourceId) (0.0, List[VertexId](sourceId)) else (Double.PositiveInfinity, List[VertexId]()))
 
+      //initalize pregal with distance and a list of visited nodes as it's message, these are the pregal config parameters
       val sssp = initialGraph.pregel((Double.PositiveInfinity, List[VertexId]()), Int.MaxValue, EdgeDirection.Out) (
+
+        //define functions for receiving messages (vprog)
+        //if message contains a smaller distance, take that over the old distance
         (id, dist, newDist) => if (dist._1 < newDist._1) dist else newDist, 
 
+        //Define functions for computing messages (Send Message)
         triplet => {
           if (triplet.srcAttr._1 < triplet.dstAttr._1 - triplet.attr ) {
             Iterator((triplet.dstId, (triplet.srcAttr._1 + triplet.attr , triplet.srcAttr._2 :+ triplet.dstId)))
@@ -26,6 +31,9 @@ object Osm {
             Iterator.empty
           }
         },
+
+        //Combine Messages (Merge)
+        //Return the message with the shorter edge
         (a, b) => if (a._1 < b._1) a else b)
 
     sssp.vertices.collect.mkString("\n")
