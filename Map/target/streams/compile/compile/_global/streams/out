@@ -1,0 +1,8 @@
+[0m[[0m[31merror[0m] [0m[0m/s/bach/n/under/mswonger/cs435/t/Map/src/main/scala/Osm.scala:94:26: overloaded method value mkString with alternatives:[0m
+[0m[[0m[31merror[0m] [0m[0m  => String <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (sep: String)String <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (start: String,sep: String,end: String)String[0m
+[0m[[0m[31merror[0m] [0m[0m cannot be applied to ()[0m
+[0m[[0m[31merror[0m] [0m[0m    bw2.write(singlePath.mkString())[0m
+[0m[[0m[31merror[0m] [0m[0m                         ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m
