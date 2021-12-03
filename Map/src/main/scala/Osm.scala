@@ -11,7 +11,7 @@ object Osm {
 
 
   //Algorithm Adapted from https://github.com/artem0/spark-graphx under GNU General Public License v3.0
-  def shortestPath[VT](graph: Graph[VT,Double], sourceId: VertexId): String = {
+  def shortestPath[VT](graph: Graph[VT,Double], sourceId: VertexId) = {
       val initialGraph : Graph[(Double, List[VertexId]), Double] = 
       graph.mapVertices((id, _) => 
       if (id == sourceId) (0.0, List[VertexId](sourceId)) else (Double.PositiveInfinity, List[VertexId]()))
